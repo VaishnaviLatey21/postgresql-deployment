@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+        name: student-entry
+        labels:
+                app: student-entry
+spec:
+        containers:
+                - name: student-entry
+                  image: vaishnavi2131/student-entry:latest
+                  ports:
+                          - containerPort: 8081
+                  env:
+                          - name: SPRING_DATASOURCE_URL
+                            value: "jdbc:postgresql://my-postgresql:5432/postgres"
+                          - name: SPRING_DATASOURCE_USERNAME
+                            value: "postgres"
+                          - name: SPRING_DATASOURCE_PASSWORD
+                            value: "aazlhj9UYz"
+                
