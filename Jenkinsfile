@@ -16,8 +16,8 @@ pipeline {
                 script {
                     sh '''
                     echo "Installing Java, Maven, PostgreSQL, and K3s..."
-                    sudo -s apt update
-                    sudo -s apt install -y openjdk-21-jdk maven docker.io postgresql postgresql-client curl
+                    apt update
+                    apt install -y openjdk-21-jdk maven docker.io postgresql postgresql-client curl
                     curl -sfL https://get.k3s.io | sh -
                     echo "Dependencies installed."
                     '''
