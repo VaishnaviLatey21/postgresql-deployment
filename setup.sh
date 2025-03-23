@@ -23,6 +23,12 @@ sudo systemctl enable jenkins
 
 echo "Jenkins has been installed and started."
 
+echo "Adding Jenkins user to Docker group"
+sudo usermod -aG docker jenkins
+
+echo "Restarting Jenkins to apply group changes"
+sudo systemctl restart jenkins
+
 # Take database credentials from user
 
 echo "Enter the database name:"
