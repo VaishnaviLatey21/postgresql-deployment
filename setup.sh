@@ -29,6 +29,10 @@ sudo usermod -aG docker jenkins
 echo "Restarting Jenkins to apply group changes"
 sudo systemctl restart jenkins
 
+# Ensure Docker is running
+echo "Checking if Docker is running..."
+sudo systemctl start docker
+
 # Take database credentials from user
 
 echo "Enter the database name:"
