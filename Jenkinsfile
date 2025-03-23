@@ -45,8 +45,6 @@ pipeline {
             steps {
                 script {
                     sh "docker build -t ${DOCKER_IMAGE} -f studentEntry/Dockerfile studentEntry/"
-		    sudo -s usermod -aG docker jenkins
-                    sudo -s systemctl restart jenkins
                 }
             }
         }
