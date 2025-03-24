@@ -90,3 +90,5 @@ curl -i -X POST http://localhost:8080/jenkins/job/$JOB_NAME/build --user $JENKIN
 
 echo "Build Complete"
 
+echo "open browser at : http://localhost:8081/swagger-ui/index.html"
+kubectl port-forward svc/student-entry 8081:8081
