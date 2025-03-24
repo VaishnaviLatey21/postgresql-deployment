@@ -3,12 +3,14 @@
 echo "update system packages"
 sudo apt update && sudo apt upgrade -y
 
-echo "Installaing Java for jenkins"
-sudo apt install -y openjdk-21-jdk maven docker.io
+echo "Installaing Java, maven, docker, postgres, k3s for jenkins"
+sudo apt install -y openjdk-21-jdk maven docker.io postgresql postgresql-client
 sudo apt install -y curl
+curl -sfL https://get.k3s.io | sh -
+echo "Dependencies installed."
 java -version
 
-echo "install jenkins"
+echo "installing jenkins"
 sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
   https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
 echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \

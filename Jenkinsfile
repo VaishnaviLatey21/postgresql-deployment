@@ -11,20 +11,6 @@ pipeline {
     }
 
     stages {
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    sh '''
-                    echo "Installing Java, Maven, PostgreSQL, and K3s..."
-                    sudo -s apt update
-                    sudo -s apt install -y openjdk-21-jdk maven docker.io postgresql postgresql-client curl
-                    curl -sfL https://get.k3s.io | sh -
-                    echo "Dependencies installed."
-                    '''
-                }
-            }
-        }
-
         stage('Clone Repository') {
             steps {
                 git url: 'https://github.com/VaishnaviLatey21/postgres-java-app.git', branch: 'master'
