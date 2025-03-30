@@ -14,8 +14,7 @@ pipeline {
 	stage('Install Dependencies') {
             steps {
                 script {
-                    sh 'sudo apt-get update && sudo apt-get install -y maven docker.io curl curl -sfL https://get.k3s.io | s			h -'
-		    helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql
+                    sh 'sudo apt-get update && sudo apt-get install -y maven docker.io curl curl -sfL https://get.k3s.io | s			h - helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql'
                 }
             }
         }
