@@ -3,7 +3,7 @@
 echo "update system packages"
 sudo apt update && sudo apt upgrade -y
 
-echo "Installaing Java, maven, docker, postgres, k3s for jenkins"
+echo "Installaing Java, maven, Jenkins"
 sudo apt install -y openjdk-21-jdk maven docker.io postgresql postgresql-client
 sudo apt install -y curl
 curl -sfL https://get.k3s.io | sh -
