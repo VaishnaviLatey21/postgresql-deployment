@@ -5,16 +5,27 @@ pipeline {
         DOCKER_IMAGE = "vaishnavi2131/postgres-java-app:latest"
         K8S_DEPLOYMENT = "studentEntry/k8s/pod.yaml"
         K8S_SERVICE = "studentEntry/k8s/service.yaml"
-        DB_URL = "${DB_URL}" 
-        DB_USER = "${DB_USER}"
-        DB_PASS = "${DB_PASS}"
+	DB_URL = "jdbc:postgresql://my-release-postgresql:5432/postgres" 
+        DB_USER = "postgres"
+        DB_PASS = "aazlhj9UYz"
     }
 
     stages {
 	stage('Install Dependencies') {
             steps {
                 script {
-                    sh 'sudo apt-get update && sudo apt-get install -y maven docker.io curl curl -sfL https://get.k3s.io | s			h - helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql'
+                    sh '''
+                        sudo apt-get update 
+                        sudo apt-get install -y maven docker.io curl
+                        curl -sfL https://get.k3s.io | sh -
+                        sleep 20 
+                        sudo k3s kubectl get nodes
+                        
+                        sudo chown jenkins:jenkins /etc/rancher/k3s/k3s.yaml
+                        export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+                        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+                        helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql
+                    '''
                 }
             }
         }
