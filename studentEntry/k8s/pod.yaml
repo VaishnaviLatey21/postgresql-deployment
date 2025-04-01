@@ -10,5 +10,12 @@ spec:
                   image: vaishnavi2131/student-entry:latest
                   ports:
                           - containerPort: 8081
+                  env:
+                          - name: DB_URL
+                            value: "jdbc:postgresql://my-release-postgresql:5432/postgres"
+                          - name: DB_USER
+                            value: "postgres"
+                          - name: DB_PASS
+                            value: "QC73uLv7UK"
                             
                 
