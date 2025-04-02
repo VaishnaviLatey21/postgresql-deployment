@@ -7,15 +7,15 @@ metadata:
 spec:
         containers:
                 - name: student-entry
-                  image: vaishnavi2131/student-entry:latest
+                  image: vaishnavi2131/postgres-java-app:latest
                   ports:
                           - containerPort: 8081
                   env:
                           - name: DB_URL
-                            value: "jdbc:postgresql://my-release-postgresql:5432/postgres"
+                            value: "jdbc:postgresql://my-release-postgresql.default:5432/postgres"
                           - name: DB_USER
                             value: "postgres"
                           - name: DB_PASS
-                            value: "QC73uLv7UK"
+                            value: "vaishnavi"
                             
                 
