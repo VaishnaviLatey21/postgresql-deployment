@@ -12,10 +12,19 @@ spec:
                           - containerPort: 8081
                   env:
                           - name: DB_URL
-                            value: "jdbc:postgresql://my-release-postgresql.default:5432/demo"
+                            valueFrom:
+                                    secretKeyRef:
+                                            name: db-secret
+                                            key: DB_NAME
                           - name: DB_USER
-                            value: "demo123"
+                            valueFrom:
+                                    secretKeyRef:
+                                            name: db-secret
+                                            key: DB_USER
                           - name: DB_PASS
-                            value: "demo321"
+                            valueFrom:
+                                    secretKeyRef:
+                                            name: db-secret
+                                            key: DB_PASS
                             
                 

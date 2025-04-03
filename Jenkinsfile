@@ -31,10 +31,14 @@ pipeline {
 			echo "Checking if Helm release 'my-release' exists..."
                         if helm list -q | grep -w "my-release"; then
 				echo "'my-release' exists. Upgrading..."
-				helm upgrade my-release oci://registry-1.docker.io/bitnamicharts/postgresql -f values.yaml
+				helm upgrade my-release oci://registry-1.docker.io/bitnamicharts/postgresql
 			else
 				echo "'my-release' not found. Installing..."
-	                        helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql -f values.yaml
+	                        helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql \
+					--set global.postgresql.auth.database="$DB_NAME" \
+					--set global.postgresql.auth.username="$DB_USER" \
+					--set global.postgresql.auth.password="$DB_PASS"
+			fi
                     '''
                 }
             }
@@ -58,7 +62,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE} -f studentEntry/Dockerfile studentEntry/"
+                    sh "docker build -t ${DOCKER_IMAGE} -f /var/lib/jenkins/vaishnavi/studentEntry/Dockerfile studentEntry/"
                 }
             }
         }

@@ -54,25 +54,15 @@ read -s DB_PASS
 
 DB_URL="jdbc:postgresql://my-release-postgresql.default:5432/$DB_NAME"
 
-POD_YAML_PATH="/var/lib/jenkins/vaishnavi/studentEntry/k8s/pod.yaml"
+# Generate the Kubernetes Secret YAML dynamically and apply it
+kubectl delete secret db-secret --ignore-not-found
 
-# Update values.yaml
-echo "Updating values.yaml with new credentials..."
-sed -i "s/\(password: \).*/\1\"$DB_PASS\"/" values.yaml
-sed -i "s/\(username: \).*/\1\"$DB_USER\"/" values.yaml
-sed -i "s/\(database: \).*/\1\"$DB_NAME\"/" values.yaml
-sed -i "s/\(postgresPassword: \).*/\1\"$DB_PASS\"/" values.yaml
+kubectl create secret generic db-secret \
+  --from-literal=DB_USER="$DB_USER" \
+  --from-literal=DB_PASS="$DB_PASS" \
+  --from-literal=DB_NAME="$DB_URL"
 
-# Update pod.yaml correctly by modifying the value lines
-echo "Updating pod.yaml with new credentials..."
-sed -i "s|^\([[:space:]]*value:\).*|\1 \"$DB_URL\"|" "$POD_YAML_PATH"
-sed -i "s|^\([[:space:]]*- name: DB_USER\)[[:space:]]*|\1|" "$POD_YAML_PATH"
-sed -i "/name: DB_USER/{n;s|^\([[:space:]]*value:\).*|\1 \"$DB_USER\"|}" "$POD_YAML_PATH"
-sed -i "/name: DB_PASS/{n;s|^\([[:space:]]*value:\).*|\1 \"$DB_PASS\"|}" "$POD_YAML_PATH"
-
-
-echo "Updated values.yaml and pod.yaml"
-
+echo "Kubernetes secret 'db-secret' has been created successfully."
 
 #echo "Enter your Jenkins username:"
 #read JENKINS_USER
