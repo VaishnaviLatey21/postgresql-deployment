@@ -12,16 +12,29 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        sudo apt-get update 
+                        sudo apt-get update
+			echo "Installing dependencies Maven, Docker, Curl..." 
                         sudo apt-get install -y maven docker.io curl
+
+			echo "Installing K3s..."
                         curl -sfL https://get.k3s.io | sh -
-                        sleep 20 
                         sudo k3s kubectl get nodes
                         
+			echo "Updating K3s config permissions..."
                         sudo chown jenkins:jenkins /etc/rancher/k3s/k3s.yaml
+
                         export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+			echo "Installing Helm..."
                         curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-                        helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql -f values.yaml
+
+			echo "Checking if Helm release 'my-release' exists..."
+                        if helm list -q | grep -w "my-release"; then
+				echo "'my-release' exists. Upgrading..."
+				helm upgrade my-release oci://registry-1.docker.io/bitnamicharts/postgresql -f values.yaml
+			else
+				echo "'my-release' not found. Installing..."
+	                        helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql -f values.yaml
                     '''
                 }
             }

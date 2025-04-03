@@ -3,19 +3,29 @@
 echo "update system packages"
 sudo apt update && sudo apt upgrade -y
 
-echo "Installaing Java "
-sudo apt install -y openjdk-21-jdk 
-echo "Installed Java"
+echo "Installing Java..."
+if ! sudo apt install -y openjdk-21-jdk; then
+    echo "Failed to install Java, Exit....."
+    exit 1
+fi
+echo "Java installed successfully"
 java -version
 
-echo "installing jenkins"
-sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
-  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
-echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
-  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-  /etc/apt/sources.list.d/jenkins.list > /dev/null
-sudo apt-get update
-sudo apt-get install jenkins
+# Check if Jenkins is installed
+if dpkg -l | grep -q jenkins; then
+    echo "Jenkins is already installed."
+    echo "Checking Jenkins version..."
+    jenkins --version
+else
+	echo "installing jenkins"
+	sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+	https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+	echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
+	https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+	/etc/apt/sources.list.d/jenkins.list > /dev/null
+	sudo apt-get update
+	sudo apt-get install jenkins
+fi
 
 echo "starting jenkins"
 sudo systemctl start jenkins
@@ -77,11 +87,29 @@ read JOB_NAME
 echo "Download Jenkins CLI"
 wget http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar
 
-echo "create jenkins job"
-java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD create-job $JOB_NAME < test.xml
+# Check if test.xml exists before proceeding
+if [[ ! -f "test.xml" ]]; then
+    echo "Error: test.xml file not found."
+    exit 1
+fi
 
-echo "Build Jenkins pipeline"
-java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD build $JOB_NAME
+# Create Jenkins job
+echo "Creating Jenkins job: $JOB_NAME..."
+if java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD create-job $JOB_NAME < test.xml; then
+	echo "Jenkins job '$JOB_NAME' created successfully."
+else
+	 echo "Error: Failed to create Jenkins job."
+         exit 1
+fi
+
+# Build Jenkins job
+echo "Building Jenkins job: $JOB_NAME..."
+if java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD build $JOB_NAME; then
+	echo "Jenkins job '$JOB_NAME' build started successfully."
+else
+	echo "Error: Failed to build Jenkins job."
+	exit 1
+fi
 
 echo "Build Complete"
 
