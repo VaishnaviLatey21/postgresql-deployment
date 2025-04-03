@@ -3,11 +3,9 @@
 echo "update system packages"
 sudo apt update && sudo apt upgrade -y
 
-echo "Installaing Java, maven, Jenkins"
-sudo apt install -y openjdk-21-jdk maven docker.io postgresql postgresql-client
-sudo apt install -y curl
-curl -sfL https://get.k3s.io | sh -
-echo "Dependencies installed."
+echo "Installaing Java "
+sudo apt install -y openjdk-21-jdk 
+echo "Installed Java"
 java -version
 
 echo "installing jenkins"
@@ -44,51 +42,48 @@ read DB_USER
 echo "Enter the database password:"
 read -s DB_PASS
 
-DB_URL="jdbc:postgresql://my-postgresql:5432/$DB_NAME"
+DB_URL="jdbc:postgresql://my-release-postgresql.default:5432/$DB_NAME"
 
-echo "Database Name: $DB_URL"
-echo "Database Username: $DB_USER"
-echo "Database Password: $DB_PASS"
+POD_YAML_PATH="/var/lib/jenkins/vaishnavi/studentEntry/k8s/pod.yaml"
 
-export DB_URL
-export DB_USER
-export DB_PASS
+# Update values.yaml
+echo "Updating values.yaml with new credentials..."
+sed -i "s/\(password: \).*/\1\"$DB_PASS\"/" values.yaml
+sed -i "s/\(username: \).*/\1\"$DB_USER\"/" values.yaml
+sed -i "s/\(database: \).*/\1\"$DB_NAME\"/" values.yaml
+sed -i "s/\(postgresPassword: \).*/\1\"$DB_PASS\"/" values.yaml
 
-#echo "Enter the Jenkins job name : "
-#read JOB_NAME
+# Update pod.yaml correctly by modifying the value lines
+echo "Updating pod.yaml with new credentials..."
+sed -i "s|^\([[:space:]]*value:\).*|\1 \"$DB_URL\"|" "$POD_YAML_PATH"
+sed -i "s|^\([[:space:]]*- name: DB_USER\)[[:space:]]*|\1|" "$POD_YAML_PATH"
+sed -i "/name: DB_USER/{n;s|^\([[:space:]]*value:\).*|\1 \"$DB_USER\"|}" "$POD_YAML_PATH"
+sed -i "/name: DB_PASS/{n;s|^\([[:space:]]*value:\).*|\1 \"$DB_PASS\"|}" "$POD_YAML_PATH"
 
-JENKINS_URL=http://localhost:8080/jenkins/
+
+echo "Updated values.yaml and pod.yaml"
+
 
 #echo "Enter your Jenkins username:"
 #read JENKINS_USER
 
-#echo "Enter your Jenkins password:"
-#read JENKINS_PASS
 
-#CRUMB=$(curl "http://localhost:8080/jenkins//crumbIssuer/api/xml?xpath=concat(//crumbRequestField,%22:%22,//crumb)" \
- #   --cookie-jar cookies.txt \
-  #  --user $JENKINS_USER:$JENKINS_PASS)
+JENKINS_PASSWORD=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
 
-#echo $CRUMB
-
-#curl  'http://localhost:8080/jenkins//user/Admin/descriptorByName/jenkins.security.ApiTokenProperty/generateNewToken' \
- #   --user $JENKINS_USER:$JENKINS_PASS \
-#    --data 'newTokenName=kb-token' \
- #   --cookie cookies.txt \
-  #  -H $CRUMB
-
-JOB_NAME="java-postgres"
-JENKINS_USER="Admin"
-JENKINS_API_TOKEN="113ee3725ed512ffffa4d8cf91ac6630c4"
-
+echo "Jenkins Initial Admin Password: $JENKINS_PASSWORD"
+echo "Enter jenkins job name:"
+read JOB_NAME
 
 echo "Download Jenkins CLI"
 wget http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar
 
-echo "Triggering Jenkins pipeline"
-curl -i -X POST http://localhost:8080/jenkins/job/$JOB_NAME/build --user $JENKINS_USER:$JENKINS_API_TOKEN
+echo "create jenkins job"
+java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD create-job $JOB_NAME < test.xml
+
+echo "Build Jenkins pipeline"
+java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD build $JOB_NAME
 
 echo "Build Complete"
 
-echo "open browser at : http://localhost:8081/swagger-ui/index.html"
-kubectl port-forward svc/student-entry 8081:8081
+#echo "open browser at : http://localhost:8081/swagger-ui/index.html"
+#kubectl port-forward svc/student-entry 8081:8081
