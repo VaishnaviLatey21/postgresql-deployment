@@ -37,7 +37,8 @@ pipeline {
 	                        helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql \
 					--set global.postgresql.auth.database="$DB_NAME" \
 					--set global.postgresql.auth.username="$DB_USER" \
-					--set global.postgresql.auth.password="$DB_PASS"
+					--set global.postgresql.auth.password="$DB_PASS" \
+					--set global.postgresql.auth.postgresPassword="$DB_PPASS"
 			fi
                     '''
                 }
