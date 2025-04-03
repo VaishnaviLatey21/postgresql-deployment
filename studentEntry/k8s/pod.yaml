@@ -12,10 +12,10 @@ spec:
                           - containerPort: 8081
                   env:
                           - name: DB_URL
-                            value: "jdbc:postgresql://my-release-postgresql.default:5432/parth123"
+                            value: "jdbc:postgresql://my-release-postgresql.default:5432/demo"
                           - name: DB_USER
-                            value: "parth"
+                            value: "demo123"
                           - name: DB_PASS
-                            value: "parth4321"
+                            value: "demo321"
                             
                 
