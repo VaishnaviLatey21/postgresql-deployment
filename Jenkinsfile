@@ -33,7 +33,13 @@ pipeline {
 				echo "'my-release' exists. Upgrading..."
 				helm upgrade my-release oci://registry-1.docker.io/bitnamicharts/postgresql
 			else
+				
 				echo "'my-release' not found. Installing..."
+				. /var/lib/jenkins/vaishnavi/.env
+                		echo "DB_USER=$DB_USER"
+                		echo "DB_PASS=$DB_PASS"
+                		echo "DB_NAME=$DB_NAME"
+
 	                        helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql \
 					--set global.postgresql.auth.postgresPassword="$DB_PASS" \
 					--set global.postgresql.auth.username="$DB_USER" \
