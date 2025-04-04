@@ -15,7 +15,7 @@ spec:
                             valueFrom:
                                     secretKeyRef:
                                             name: db-secret
-                                            key: DB_NAME
+                                            key: DB_URL
                           - name: DB_USER
                             valueFrom:
                                     secretKeyRef:
