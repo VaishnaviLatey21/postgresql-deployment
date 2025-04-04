@@ -61,7 +61,8 @@ kubectl create secret generic db-secret \
   --from-literal=DB_USER="$DB_USER" \
   --from-literal=DB_PASS="$DB_PASS" \
   --from-literal=DB_URL="$DB_URL" \
-#--from-literal=DB_PPASS="$DB_PASS"
+  --from-literal=DB_NAME="$DB_NAME" \
+  --from-literal=DB_POSTGRESPASS="$DB_PASS"
 
 echo "Kubernetes secret 'db-secret' has been created successfully."
 
