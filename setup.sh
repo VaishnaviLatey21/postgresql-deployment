@@ -33,6 +33,15 @@ sudo systemctl enable jenkins
 
 echo "Jenkins has been installed and started."
 
+echo "Installing K3s..."
+                        curl -sfL https://get.k3s.io | sh -
+                        sudo k3s kubectl get nodes
+
+                        echo "Updating K3s config permissions..."
+                        sudo chown jenkins:jenkins /etc/rancher/k3s/k3s.yaml
+
+                        export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
 echo "Adding Jenkins user to Docker group"
 sudo usermod -aG docker jenkins
 
@@ -83,6 +92,9 @@ read JOB_NAME
 
 echo "Download Jenkins CLI"
 wget http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar
+
+java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD install-plugin github pipeline-utility-steps docker-workflow kubernetes
+
 
 # Check if test.xml exists before proceeding
 if [[ ! -f "/tmp/test.xml" ]]; then
