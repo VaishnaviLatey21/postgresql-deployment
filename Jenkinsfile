@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "vaishnavi2131/postgres-java-app:latest"
-        K8S_DEPLOYMENT = "studentEntry/k8s/pod.yaml"
+        K8S_POD = "studentEntry/k8s/pod.yaml"
         K8S_SERVICE = "studentEntry/k8s/service.yaml"
     }
 
@@ -13,8 +13,8 @@ pipeline {
                 script {
                     sh '''
                         sudo apt-get update
-			echo "Installing dependencies Maven, Docker, Curl..." 
-                        sudo apt-get install -y maven docker.io curl
+			echo "Installing dependencies Docker, Curl..." 
+                        sudo apt-get install -y docker.io curl
 
 			echo "Installing K3s..."
                         curl -sfL https://get.k3s.io | sh -
@@ -85,7 +85,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh "/usr/local/bin/k3s kubectl apply -f ${K8S_DEPLOYMENT}"
+                sh "/usr/local/bin/k3s kubectl apply -f ${K8S_POD}"
                 sh "/usr/local/bin/k3s kubectl apply -f ${K8S_SERVICE}"
             }
         }

@@ -69,6 +69,7 @@ echo "Kubernetes secret 'db-secret' has been created successfully."
 #echo "Enter your Jenkins username:"
 #read JENKINS_USER
 
+mkdir /var/lib/jenkins/vaishnavi
 echo "export DB_USER=$DB_USER" >> /var/lib/jenkins/vaishnavi/.env
 echo "export DB_PASS=$DB_PASS" >> /var/lib/jenkins/vaishnavi/.env
 echo "export DB_NAME=$DB_NAME" >> /var/lib/jenkins/vaishnavi/.env
@@ -84,14 +85,16 @@ echo "Download Jenkins CLI"
 wget http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar
 
 # Check if test.xml exists before proceeding
-if [[ ! -f "test.xml" ]]; then
+if [[ ! -f "/tmp/test.xml" ]]; then
     echo "Error: test.xml file not found."
     exit 1
 fi
 
+cp /tmp/test.xml /var/lib/jenkins/vaishnavi/
+
 # Create Jenkins job
 echo "Creating Jenkins job: $JOB_NAME..."
-if java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD create-job $JOB_NAME < test.xml; then
+if java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD create-job $JOB_NAME < /var/lib/jenkins/vaishnavi/test.xml; then
 	echo "Jenkins job '$JOB_NAME' created successfully."
 else
 	 echo "Error: Failed to create Jenkins job."
@@ -99,15 +102,15 @@ else
 fi
 
 # Build Jenkins job
-echo "Building Jenkins job: $JOB_NAME..."
-if java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD build $JOB_NAME; then
-	echo "Jenkins job '$JOB_NAME' build started successfully."
-else
-	echo "Error: Failed to build Jenkins job."
-	exit 1
-fi
+# echo "Building Jenkins job: $JOB_NAME..."
+# if java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD build $JOB_NAME; then
+# 	echo "Jenkins job '$JOB_NAME' build started successfully."
+# else
+# 	echo "Error: Failed to build Jenkins job."
+# 	exit 1
+# fi
 
-echo "Build Complete"
+# echo "Build Complete"
 
 #echo "open browser at : http://localhost:8081/swagger-ui/index.html"
 #kubectl port-forward svc/student-entry 8081:8081
