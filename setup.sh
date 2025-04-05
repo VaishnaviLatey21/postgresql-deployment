@@ -93,8 +93,10 @@ read JOB_NAME
 echo "Download Jenkins CLI"
 wget http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar
 
-java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD install-plugin github pipeline-utility-steps docker-workflow kubernetes
+java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -auth admin:$JENKINS_PASSWORD install-plugin github pipeline-utility-steps docker-workflow kubernetes workflow-aggregator
 
+echo "Restarting Jenkins to apply group changes"
+sudo systemctl restart jenkins
 
 # Check if test.xml exists before proceeding
 if [[ ! -f "/tmp/test.xml" ]]; then
