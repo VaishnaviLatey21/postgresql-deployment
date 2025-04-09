@@ -82,7 +82,7 @@ mkdir /var/lib/jenkins/vaishnavi
 echo "export DB_USER=$DB_USER" >> /var/lib/jenkins/vaishnavi/.env
 echo "export DB_PASS=$DB_PASS" >> /var/lib/jenkins/vaishnavi/.env
 echo "export DB_NAME=$DB_NAME" >> /var/lib/jenkins/vaishnavi/.env
-#echo "export DB_POSTGRESPASS=$DB_PASS" >> /var/lib/jenkins/vaishnavi/.env
+echo "export POSTGRES_PASSWORD=$DB_PASS" >> /var/lib/jenkins/vaishnavi/.env
 
 JENKINS_PASSWORD=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
 
