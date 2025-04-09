@@ -1,1 +1,1 @@
-Automating the postgresql deployemnt usiing jenkins and helm
+Automating the postgresql deployemnt usiing jenkins and without helm
