@@ -52,7 +52,6 @@ pipeline {
 				
 				echo "Applying PostgreSQL StatefulSet and Service..."
 	                       /usr/local/bin/k3s kubectl apply -f studentEntry/k8s/postgres/
-			fi
                     '''
                 }
             }
