@@ -45,26 +45,13 @@ pipeline {
 
                         export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
-			echo "Installing Helm..."
-                        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
-			echo "Checking if Helm release 'my-release' exists..."
-                        if helm list -q | grep -w "my-release"; then
-				echo "'my-release' exists. Upgrading..."
-				helm upgrade my-release oci://registry-1.docker.io/bitnamicharts/postgresql
-			else
-				
-				echo "'my-release' not found. Installing..."
 				. /var/lib/jenkins/vaishnavi/.env
                 		echo "DB_USER=$DB_USER"
                 		echo "DB_PASS=$DB_PASS"
                 		echo "DB_NAME=$DB_NAME"
-
-	                        helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql \
-					--set global.postgresql.auth.postgresPassword="$DB_PASS" \
-					--set global.postgresql.auth.username="$DB_USER" \
-					--set global.postgresql.auth.password="$DB_PASS" \
-					--set global.postgresql.auth.database="$DB_NAME"
+				
+				echo "Applying PostgreSQL StatefulSet and Service..."
+	                       /usr/local/bin/k3s kubectl apply -f studentEntry/k8s/postgres/
 			fi
                     '''
                 }
