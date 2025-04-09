@@ -3,7 +3,7 @@ pipeline {
 
     environment {
 	    DOCKER_IMAGE = "vaishnavi2131/postgres-java-app:latest"
-	    REPO_URL = "https://github.com/VaishnaviLatey21/postgres-java-app.git"
+	    REPO_URL = "https://github.com/VaishnaviLatey21/postgresql-deployment.git"
        	    REPO_DIR = "studentEntry"
        	    K8S_POD = "studentEntry/k8s/pod.yaml"
        	    K8S_SERVICE = "studentEntry/k8s/service.yaml"
