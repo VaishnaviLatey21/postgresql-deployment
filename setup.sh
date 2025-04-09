@@ -61,7 +61,7 @@ read DB_USER
 echo "Enter the database password:"
 read -s DB_PASS
 
-DB_URL="jdbc:postgresql://postgres-service.default:5432/$DB_NAME"
+DB_URL="jdbc:postgresql://postgres.default:5432/$DB_NAME"
 
 # Generate the Kubernetes Secret YAML dynamically and apply it
 kubectl delete secret db-secret --ignore-not-found
