@@ -45,5 +45,5 @@ spec:
         resources:
           requests:
             storage: 1Gi
-        storageClassName: manual
+        storageClassName: local-storage
 
